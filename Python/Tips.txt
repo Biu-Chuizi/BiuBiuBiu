@@ -1,0 +1,36 @@
+./darknet detector test detection_scripts/polyp_detection.data detection_scripts/polyp_detection_test.cfg backup/polyp_detection_train_final.weights -idir /media/lab/Transcend/Polyps_data/CVC-ColonDB/data1/ -odir /media/lab/Transcend/Polyps_data/CVC-ColonDB/t11/ -edir /media/lab/Transcend/Polyps_data/CVC-ColonDB/f11/ -thresh 0.1
+./darknet detector demo cfg/coco1.data cfg/yolov3.cfg yolov3-voctwo.weights -thresh 0.8
+./darknet detector demo cfg/coco.data cfg/yolov3.cfg yolov3-voc_final.weights -input /home/lab/polypvideo/validation.mp4
+
+save result to the file res.avi: darknet.exe detector demo data/voc.data yolo-voc.cfg yolo-voc.weights test.mp4 -i 0 -out_filename res.avi
+
+2018/10/10 training
+首先在训练的时候，可以通过script命令把terminal的输出都录像到一个txt文档中。
+script -a log.txt
+./darknet detector train detection_scripts/polyp_detection.data detection_scripts/polyp_detection_train.cfg darknet53.conv.74 -gpus 0,1
+./darknet detector train detection_scripts/polyp_detection.data detection_scripts/polyp_detection_train.cfg backup/polyp_detection_train.backup -gpus 0,1     //可从断点恢复训练
+使用多GPU训练前需要先用单GPU训练至Obj有稳定上升的趋势后（我一般在obj大于0.1后切换）再使用backup中备份的weights通过多GPU继续训练。一般情况下使用单GPU训练1000个迭代即可切换到多GPU。 
+
+Region Avg IOU： 这个是预测出的bbox和实际标注的bbox的交集 除以 他们的并集。显然，这个数值越大，说明预测的结果越好。
+Avg Recall： 这个表示平均召回率， 意思是  检测出物体的个数 除以 标注的所有物体个数。
+count： 标注的所有物体的个数。 如果 count = 6， recall = 0.66667， 就是表示一共有6个物体（可能包含不同类别，这个不管类别），然后我预测出来了4个，所以Recall 就是 4 除以 6 = 0.66667 。
+有一行跟上面不一样的，最开始的是iteration次数，然后是train loss，然后是avg train loss， 然后是学习率， 然后是一batch的处理时间， 然后是已经一共处理了多少张图片。 
+重点关注 train loss 和avg train loss，这两个值应该是随着iteration增加而逐渐降低的。如果loss增大到几百那就是训练发散了，如果loss在一段时间不变，
+就需要降低learning rate或者改变batch来加强学习效果。当然也可能是训练已经充分。这个需要自己判断。
+
+
+为了评估性能，可以使用以下指令 
+./darknet detector recall detection_scripts/polyp_detection.data detection_scripts/polyp_detection_test.cfg backup/polyp_detection_train_final.weights
+需要注意的是，在使用这个指令之前，我先修改一下src/detector.c 这一函数
+（1）位置第375行改成：list *plist = get_paths(“/home/yolo_v2_tinydarknet/darknet/infrared/infrared_val.txt”);//改成infrared_val.txt的完整路径
+（2）运行上面的指令会调用validate_detector_recall函数，这个函数中有个参数thresh（阈值），默认的值是.001，这个默认值设的很小，会让系统识别出更多的框来，导致proposals值激增，还会让recall值变高，达到98.5%。最终我改成了 .25。
+（3）上面的函数只会显示出recall值，没有precision值，precision的值计算方法是：识别为正确的个数/画了多少个框，所以我修改了代码。
+我把第447行显示结果的代码修改为 ：
+fprintf(stderr, "ID:%5d Correct:%5d Total:%5d\tRPs/Img: %.2f\tIOU: %.2f%%\tRecall:%.2f%%\t", i, correct, total, (float)proposals/(i+1), avg_iou*100/total, 100.*correct/total);
+fprintf(stderr, "proposals:%5d\tPrecision:%.2f%%\n",proposals,100.*correct/(float)proposals); 
+运行后显示的结果是： 
+Correct ：可以理解为正确地画了多少个框，遍历每张图片的Ground Truth，网络会预测出很多的框，对每一Groud Truth框与所有预测出的框计算IoU，在所有IoU中找一个最大值，如果最大值超过一个预设的阈值，则correct加一。
+Total：一共有多少个Groud Truth框。
+Rps/img：p 代表proposals， r 代表region。 意思就是平均下来每个图片会有预测出多少个框。预测框的决定条件是，预测某一类的概率大于阈值。在validation_yolo_recall函数中，默认的这一个阈值是0.001，
+这一阈值设置的比较低，这就会导致会预测出很多个框，但是这样做是可以提升recall的值，一般yolo用于画框的默认值是.25，使用这个阈值会让画出来的框比较准确。而validation_yolo_recall使用的阈值改成25的时候，
+Rps/img 值会降低，recall的值会降低，所以validation_yolo_recall默认使用一个较低的阈值，有可能作者的目的就是为了提高recall值，想在某种程度上体现网络的识别精度比较高。

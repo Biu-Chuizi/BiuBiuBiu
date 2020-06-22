@@ -1,0 +1,8 @@
+[conf]
+image_input=/media/lab/BIE_ZHUXIN/good201905011/Peld.avi
+label_input=/media/lab/BIE_ZHUXIN/lab1
+image_output=/media/lab/BIE_ZHUXIN/out
+angle=0
+class=Nerve
+noise=False
+color=False

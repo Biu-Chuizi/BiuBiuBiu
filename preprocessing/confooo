@@ -1,0 +1,8 @@
+[conf]
+image_input=/home/lab/darknet/detection_data/JPEGImages
+label_input=/home/lab/darknet/detection_data/Annotations
+image_output=/home/lab/darknet/detection_data/out
+angle=0,90,180,270
+class=polyp,light,bubble,tool,stool,FP,hole
+noise=True
+color=True
