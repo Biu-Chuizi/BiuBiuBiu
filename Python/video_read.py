@@ -10,11 +10,11 @@ import os
 import cv2
 # import cv
 
-videos_src_path = '/Users/guo/ss'
-videos_save_path = '/Users/guo/a'
+videos_src_path = '/Users/guozhe/Desktop/OSA'
+videos_save_path = '/Users/guozhe/Desktop/0'
 
 videos = os.listdir(videos_src_path)
-videos = filter(lambda x: x.endswith('MP4'), videos)
+videos = filter(lambda x: x.endswith('mp4'), videos)  ## MP4 dev 
 
 for each_video in videos:
     # print each_video
@@ -31,6 +31,9 @@ for each_video in videos:
     cap  = cv2.VideoCapture(each_video_full_path)
     frame_count = 1
     success = True
+
+    timeF = 100  
+
     while(success):
         success, frame = cap.read()
         # print 'Read a new frame: ', success
@@ -38,7 +41,9 @@ for each_video in videos:
         params = []
         # params.append(cv2.CV_IMWRITE_PXM_BINARY)
         params.append(1)
-        cv2.imwrite(each_video_save_full_path + each_video_name + "_%d.jpg" % frame_count, frame, params)
+        if (frame_count%timeF == 0):
+
+            cv2.imwrite(each_video_save_full_path + each_video_name + "_%d.tiff" % frame_count, frame, params)
 
         frame_count = frame_count + 1
 
@@ -48,11 +53,11 @@ cap.release()
 # import cv2
 
        
-# vc = cv2.VideoCapture('a.mp4') #读入视频文件
+# vc = cv2.VideoCapture('/Users/guozhe/Desktop/OSA/a.mp4') #读入视频文件
 # c=1
 
 # if vc.isOpened(): #判断是否正常打开
-#     rval , frame = vc.read()
+#     rval, frame = vc.read()
 # else:
 #     rval = False
 
