@@ -10,8 +10,8 @@ import os
 import cv2
 # import cv
 
-videos_src_path = '/Users/guozhe/Desktop/OSA'
-videos_save_path = '/Users/guozhe/Desktop/0'
+videos_src_path = '/Users/guozhe/Desktop/FFOutput'
+videos_save_path = '/Volumes/Ubuntu-Serv/0'
 
 videos = os.listdir(videos_src_path)
 videos = filter(lambda x: x.endswith('mp4'), videos)  ## MP4 dev 
@@ -32,7 +32,7 @@ for each_video in videos:
     frame_count = 1
     success = True
 
-    timeF = 100  
+    timeF = 10  
 
     while(success):
         success, frame = cap.read()
@@ -43,7 +43,7 @@ for each_video in videos:
         params.append(1)
         if (frame_count%timeF == 0):
 
-            cv2.imwrite(each_video_save_full_path + each_video_name + "_%d.tiff" % frame_count, frame, params)
+            cv2.imwrite(each_video_save_full_path + each_video_name + "_%d.jpg" % frame_count, frame, params)
 
         frame_count = frame_count + 1
 
