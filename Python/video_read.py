@@ -10,7 +10,7 @@ import os
 import cv2
 # import cv
 
-videos_src_path = '/Users/guozhe/Desktop/FFOutput'
+videos_src_path = '/Volumes/Ubuntu-Serv/FFOutput'
 videos_save_path = '/Volumes/Ubuntu-Serv/0'
 
 videos = os.listdir(videos_src_path)
@@ -43,7 +43,7 @@ for each_video in videos:
         params.append(1)
         if (frame_count%timeF == 0):
 
-            cv2.imwrite(each_video_save_full_path + each_video_name + "_%d.jpg" % frame_count, frame, params)
+            cv2.imwrite(each_video_save_full_path + each_video_name + "_%d.tiff" % frame_count, frame, params)
 
         frame_count = frame_count + 1
 
@@ -53,7 +53,7 @@ cap.release()
 # import cv2
 
        
-# vc = cv2.VideoCapture('/Users/guozhe/Desktop/OSA/a.mp4') #读入视频文件
+# vc = cv2.VideoCapture('/Volumes/Ubuntu-Serv/FFOutput/陈志文151804.mp4') #读入视频文件
 # c=1
 
 # if vc.isOpened(): #判断是否正常打开
@@ -61,7 +61,7 @@ cap.release()
 # else:
 #     rval = False
 
-# timeF = 1000  #视频帧计数间隔频率
+# timeF = 100  #视频帧计数间隔频率
 
 # while rval:   #循环读取视频帧
 #     rval, frame = vc.read()
