@@ -1,23 +1,23 @@
-close all;clear;clc;
+close all; clear; clc;
 
-video_file = 'D:\20190904\video\17'; 
+video_file = 'D:\OSA\新建文件夹'; 
 
-list = dir(fullfile(video_file))
+list = dir(fullfile(video_file));
 for k = 3:size(list,1)
-    video_name=list(k).name
-    new_name=strsplit(video_name, '.');
-    new_name=new_name{1,1};
-    video_path=fullfile(video_file,video_name);
+    video_name = list(k).name;
+    new_name = strsplit(video_name, '.');
+    new_name = new_name{1,1};
+    video_path = fullfile(video_file,video_name);
 %     dir_name = split(num2str(list(k).name),'.')
-    mkdir( 'D:\20190904\frame', new_name)
+    mkdir( 'D:\frame1', new_name)
 %     mkdir( 'D:\a', num2str(list(k).name))
 %     num2str(list(k).name))
     obj = VideoReader(video_path);
     numFrames = obj.NumberOfFrames;
     for bb = 1: numFrames
-        if rem(bb,1) == 0
+        if rem(bb,10) == 0
             i=bb;
-            image_name=strcat(['D:\20190904\frame\',new_name,'\',num2str(i)],'.jpg');
+            image_name=strcat(['D:\frame1\', new_name,'\', num2str(i)], '.jpg');
 %                 num2str(video_name),'\',num2str(i)],'.jpg');
             frame = read(obj,i);
             imwrite(frame,image_name,'jpg');
