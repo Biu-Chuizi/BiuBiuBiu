@@ -52,18 +52,18 @@
 
 import cv2
 
-videos_src_path = 'C:\Users\1\Documents\11'
+# videos_src_path = 'C:\Users\1\Documents\11'
 # videos_save_path = '/Volumes/Ubuntu-Serv/0'
 
-videos = os.listdir(videos_src_path)
+# videos = os.listdir(videos_src_path)
 
-for each_video in videos:
+# for each_video in videos:
 
-    each_video_full_path = os.path.join(videos_src_path, each_video)
+#     each_video_full_path = os.path.join(videos_src_path, each_video)
 
-    vc  = cv2.VideoCapture(each_video_full_path)       
+#     vc  = cv2.VideoCapture(each_video_full_path)       
 # vc = cv2.VideoCapture('/Volumes/Ubuntu-Serv/FFOutput/陈志文151804.mp4') #读入视频文件
-# vc = cv2.VideoCapture('C:\Users\1\Documents\11')
+vc = cv2.VideoCapture('D:\20211221\艾卫光104011.mpg')
 c=1
 
 if vc.isOpened(): #判断是否正常打开
